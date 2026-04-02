@@ -1,12 +1,21 @@
 package edu.uscb.csci470sp26.clinivo_backend.dto;
 
+import jakarta.validation.constraints.*;
+
 public class UserRequest {
-	
+	@NotBlank(message = "First name is required")
 	private String firstName;
+	@NotBlank(message = "Last name is required")
     private String lastName;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
     private String email;
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number should be valid")
     private String phoneNumber;
+    @NotBlank(message = "Password is required")
     private String password;
+    @NotBlank(message = "Role is required")
     private String role; // "PATIENT" or "PROVIDER"
 
     public UserRequest() {}

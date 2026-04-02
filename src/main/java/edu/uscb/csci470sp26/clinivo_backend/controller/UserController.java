@@ -10,6 +10,7 @@ import edu.uscb.csci470sp26.clinivo_backend.dto.UserRequest;
 import edu.uscb.csci470sp26.clinivo_backend.dto.UserResponse;
 import edu.uscb.csci470sp26.clinivo_backend.model.User;
 import edu.uscb.csci470sp26.clinivo_backend.service.UserService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,7 +25,7 @@ public class UserController {
 
     //  CREATE user
     @PostMapping
-    public UserResponse createUser(@RequestBody UserRequest request) {
+    public UserResponse createUser(@Valid @RequestBody UserRequest request) {
 
         User user = userService.createUser(request);
 
