@@ -16,12 +16,11 @@ public class MessageController {
 
     private final MessageService messageService;
 
-    // Constructor injection
     public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
 
-    //  Send a message
+    // Send a message
     @PostMapping
     public MessageResponse sendMessage(@RequestBody MessageRequest request) {
 
@@ -39,7 +38,7 @@ public class MessageController {
         );
     }
 
-    //  Get messages in a conversation
+    // Get messages in a conversation
     @GetMapping("/conversation/{conversationId}")
     public List<MessageResponse> getMessages(@PathVariable Long conversationId) {
 

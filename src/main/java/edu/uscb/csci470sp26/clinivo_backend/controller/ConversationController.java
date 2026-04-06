@@ -15,27 +15,38 @@ public class ConversationController {
 
     private final ConversationService conversationService;
 
-    // Constructor injection
     public ConversationController(ConversationService conversationService) {
         this.conversationService = conversationService;
     }
 
-    //  Create conversation
-    @PostMapping
-    public ConversationResponse createConversation(@RequestBody List<Long> participantIds) {
+    // Create or return existing conversation between doctor and patient
+    @PostMapping("/{doctorId}/{patientId}")
+    public ConversationResponse createOrGetConversation(
+            @PathVariable Long doctorId,
+            @PathVariable Long patientId) {
 
-        Conversation conversation = conversationService.createConversation(participantIds);
+        Conversation conversation =
+                conversationService.getOrCreateConversation(doctorId, patientId);
 
         return new ConversationResponse(conversation.getId());
     }
 
-    //  Get user conversations
-    @GetMapping("/user/{userId}")
-    public List<ConversationResponse> getUserConversations(@PathVariable Long userId) {
+    // Get all conversations for a doctor
+    @GetMapping("/doctor/{doctorId}")
+    public List<ConversationResponse> getDoctorConversations(@PathVariable Long doctorId) {
 
-        return conversationService.getUserConversations(userId)
+        return conversationService.getDoctorConversations(doctorId)
                 .stream()
                 .map(c -> new ConversationResponse(c.getId()))
                 .collect(Collectors.toList());
+    }
+
+    // Get the single conversation for a patient
+    @GetMapping("/patient/{patientId}")
+    public ConversationResponse getPatientConversation(@PathVariable Long patientId) {
+
+        Conversation conversation = conversationService.getPatientConversation(patientId);
+
+        return new ConversationResponse(conversation.getId());
     }
 }
