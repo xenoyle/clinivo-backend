@@ -47,13 +47,24 @@ public class ConversationService {
                 });
     }
 
-    // Get all conversations for a doctor
+    // Get all conversations for a doctor (list)
     public java.util.List<Conversation> getDoctorConversations(Long doctorId) {
         User doctor = userRepository.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         return conversationRepository.findByDoctor(doctor);
     }
+
+//    // ⭐ Get the single conversation for a doctor
+//    public Conversation getDoctorConversation(Long doctorId) {
+//        User doctor = userRepository.findById(doctorId)
+//                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+//
+//        return conversationRepository.findByDoctor(doctor)
+//                .stream()
+//                .findFirst()
+//                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+//    }
 
     // Get the single conversation for a patient
     public Conversation getPatientConversation(Long patientId) {

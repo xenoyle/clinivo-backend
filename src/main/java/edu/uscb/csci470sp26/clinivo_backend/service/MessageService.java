@@ -34,9 +34,9 @@ public class MessageService {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Validate sender belongs to this conversation
-        if (!sender.equals(conversation.getDoctor()) &&
-            !sender.equals(conversation.getPatient())) {
+        // FIXED: Compare IDs, not object references
+        if (!sender.getId().equals(conversation.getDoctor().getId()) &&
+            !sender.getId().equals(conversation.getPatient().getId())) {
             throw new RuntimeException("Sender is not part of this conversation");
         }
 
@@ -47,6 +47,7 @@ public class MessageService {
 
         return messageRepository.save(message);
     }
+
 
     public List<Message> getMessages(Long conversationId) {
 

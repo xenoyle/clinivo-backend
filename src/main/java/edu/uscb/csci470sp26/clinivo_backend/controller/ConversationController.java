@@ -31,15 +31,17 @@ public class ConversationController {
         return new ConversationResponse(conversation.getId());
     }
 
-    // Get all conversations for a doctor
+    // Get the single conversation for a doctor
     @GetMapping("/doctor/{doctorId}")
     public List<ConversationResponse> getDoctorConversations(@PathVariable Long doctorId) {
-
         return conversationService.getDoctorConversations(doctorId)
                 .stream()
                 .map(c -> new ConversationResponse(c.getId()))
                 .collect(Collectors.toList());
     }
+
+
+
 
     // Get the single conversation for a patient
     @GetMapping("/patient/{patientId}")

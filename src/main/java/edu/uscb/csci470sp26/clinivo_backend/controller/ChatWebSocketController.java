@@ -42,8 +42,10 @@ public class ChatWebSocketController {
                 saved.getId(),
                 saved.getSender().getId(),
                 saved.getContent(),
-                saved.getCreatedAt()
+                saved.getCreatedAt(),
+                saved.getConversation().getId() // ⭐ ADD THIS
         );
+
 
         // Send to doctor
         messagingTemplate.convertAndSend(

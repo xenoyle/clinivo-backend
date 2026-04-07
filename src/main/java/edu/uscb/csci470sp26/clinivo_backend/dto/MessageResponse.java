@@ -8,14 +8,16 @@ public class MessageResponse {
     private Long senderId;
     private String content;
     private LocalDateTime createdAt;
+    private Long conversationId; // ⭐ ADDED
 
     public MessageResponse() {}
 
-    public MessageResponse(Long id, Long senderId, String content, LocalDateTime createdAt) {
+    public MessageResponse(Long id, Long senderId, String content, LocalDateTime createdAt, Long conversationId) {
         this.id = id;
         this.senderId = senderId;
         this.content = content;
         this.createdAt = createdAt;
+        this.conversationId = conversationId; // ⭐ ADDED
     }
 
     public Long getId() {
@@ -34,6 +36,10 @@ public class MessageResponse {
         return createdAt;
     }
 
+    public Long getConversationId() { // ⭐ ADDED
+        return conversationId;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -48,5 +54,9 @@ public class MessageResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setConversationId(Long conversationId) { // ⭐ ADDED
+        this.conversationId = conversationId;
     }
 }

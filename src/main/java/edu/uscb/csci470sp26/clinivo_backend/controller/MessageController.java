@@ -34,7 +34,8 @@ public class MessageController {
                 message.getId(),
                 message.getSender().getId(),
                 message.getContent(),
-                message.getCreatedAt()
+                message.getCreatedAt(),
+                message.getConversation().getId()   // ⭐ ADDED
         );
     }
 
@@ -48,7 +49,8 @@ public class MessageController {
                         m.getId(),
                         m.getSender().getId(),
                         m.getContent(),
-                        m.getCreatedAt()
+                        m.getCreatedAt(),
+                        m.getConversation().getId()   // ⭐ ADDED
                 ))
                 .collect(Collectors.toList());
     }
