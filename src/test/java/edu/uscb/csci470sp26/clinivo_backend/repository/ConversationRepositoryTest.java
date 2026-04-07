@@ -25,11 +25,14 @@ public class ConversationRepositoryTest {
     @Test
     public void testUserConversations() {
 
-        User user = new User();
-        user.setEmail("test@test.com");
-        user.setPassword("123");
-        user.setRole(User.Role.PATIENT);
-        user = userRepository.save(user);
+    	User user = new User();
+    	user.setFirstName("Test");
+    	user.setLastName("User");
+    	user.setEmail("test@test.com");
+    	user.setPassword("123");
+    	user.setPhoneNumber("1112223333"); 
+    	user.setRole(User.Role.PATIENT);
+    	user = userRepository.save(user);
 
         Conversation conversation = new Conversation();
         conversation = conversationRepository.save(conversation);

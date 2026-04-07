@@ -13,7 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import edu.uscb.csci470sp26.clinivo_backend.model.User;
+import jakarta.transaction.Transactional;
 
+@Transactional
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class UserRepositoryTest {
@@ -29,6 +31,7 @@ public class UserRepositoryTest {
         user.setLastName("Doe");
         user.setEmail("john@test.com");
         user.setPassword("123");
+        user.setPhoneNumber("1234567890");
         user.setRole(User.Role.PATIENT);
 
         user = userRepository.save(user);
@@ -47,6 +50,7 @@ public class UserRepositoryTest {
         user.setLastName("Doe");
         user.setEmail("jane@test.com");
         user.setPassword("123");
+        user.setPhoneNumber("0987654321");
         user.setRole(User.Role.PROVIDER);
 
         User savedUser = userRepository.save(user);
@@ -63,6 +67,7 @@ public class UserRepositoryTest {
         user.setLastName("Me");
         user.setEmail("delete@test.com");
         user.setPassword("123");
+        user.setPhoneNumber("1112223333");
         user.setRole(User.Role.PATIENT);
 
         user = userRepository.save(user);

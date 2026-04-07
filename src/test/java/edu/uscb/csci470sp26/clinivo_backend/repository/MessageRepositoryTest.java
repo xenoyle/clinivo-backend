@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import edu.uscb.csci470sp26.clinivo_backend.model.*;
+import jakarta.transaction.Transactional;
+
 
 @DataJpaTest
 public class MessageRepositoryTest {
@@ -27,11 +29,14 @@ public class MessageRepositoryTest {
     @Test
     public void testFindByConversationId() {
 
-        User user = new User();
-        user.setEmail("test@test.com");
-        user.setPassword("123");
-        user.setRole(User.Role.PATIENT);
-        user = userRepository.save(user);
+    	User user = new User();
+    	user.setFirstName("Test");
+    	user.setLastName("User");
+    	user.setEmail("test@test.com");
+    	user.setPassword("123");
+    	user.setPhoneNumber("1112223333"); 
+    	user.setRole(User.Role.PATIENT);
+    	user = userRepository.save(user);
 
         Conversation conversation = new Conversation();
         conversation = conversationRepository.save(conversation);

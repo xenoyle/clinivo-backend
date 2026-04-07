@@ -46,6 +46,7 @@ public class UserControllerTest {
           "firstName": "John",
           "lastName": "Doe",
           "email": "john@test.com",
+          "phoneNumber": "1234567890",
           "password": "123",
           "role": "PATIENT"
         }
@@ -80,6 +81,7 @@ public class UserControllerTest {
           "firstName": "Jane",
           "lastName": "Doe",
           "email": "jane@test.com",
+          "phoneNumber": "0987654321",
           "password": "123",
           "role": "PROVIDER"
         }
@@ -107,7 +109,8 @@ public class UserControllerTest {
         {
           "firstName": "Updated",
           "lastName": "User",
-          "email": "updated@test.com",
+          "email": "jane@test.com",
+          "phoneNumber": "1112223330,
           "role": "PROVIDER"
         }
         """;

@@ -16,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jayway.jsonpath.JsonPath;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ConversationControllerTest {
@@ -35,6 +38,7 @@ public class ConversationControllerTest {
           "lastName": "User",
           "email": "user1@test.com",
           "password": "123",
+          "phoneNumber": "1234567890",
           "role": "PATIENT"
         }
         """;
@@ -44,14 +48,14 @@ public class ConversationControllerTest {
                 .content(userJson))
                 .andReturn().getResponse().getContentAsString();
 
-        user1Id = JsonPath.read(response1, "$.id");
+        user1Id = ((Number)JsonPath.read(response1, "$.id")).longValue();
 
         String response2 = mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userJson.replace("user1", "user2")))
                 .andReturn().getResponse().getContentAsString();
 
-        user2Id = JsonPath.read(response2, "$.id");
+        user2Id = ((Number)JsonPath.read(response2, "$.id")).longValue();
     }
 
     @Test

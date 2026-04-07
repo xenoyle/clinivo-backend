@@ -16,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jayway.jsonpath.JsonPath;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MessageControllerTest {
@@ -36,6 +39,7 @@ public class MessageControllerTest {
           "lastName": "User",
           "email": "test1@test.com",
           "password": "123",
+          "phoneNumber": "1234567890",
           "role": "PATIENT"
         }
         """;
