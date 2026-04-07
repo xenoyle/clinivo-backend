@@ -27,105 +27,95 @@ import com.jayway.jsonpath.JsonPath;
 @Transactional
 public class UserControllerTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+	@Autowired
+	private WebApplicationContext webApplicationContext;
 
-    private Long testUserId;
+	private Long testUserId;
 
-    @BeforeEach
-    public void setup() throws Exception {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+	@BeforeEach
+	public void setup() throws Exception {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 
-        String newUserJson = """
-        {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "john@test.com",
-          "phoneNumber": "1234567890",
-          "password": "123",
-          "role": "PATIENT"
-        }
-        """;
+		String newUserJson = """
+				{
+				  "firstName": "John",
+				  "lastName": "Doe",
+				  "email": "john@test.com",
+				  "phoneNumber": "1234567890",
+				  "password": "123",
+				  "role": "PATIENT"
+				}
+				""";
 
-        String response = mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(newUserJson))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+		String response = mockMvc
+				.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(newUserJson)).andReturn()
+				.getResponse().getContentAsString();
 
-        Integer id = JsonPath.read(response, "$.id");
-        testUserId = id.longValue();
+		Integer id = JsonPath.read(response, "$.id");
+		testUserId = id.longValue();
 
-        logger.info("Setup complete. Test user ID: {}", testUserId);
-    }
+		logger.info("Setup complete. Test user ID: {}", testUserId);
+	}
 
-    @Test
-    public void testGetUserById() throws Exception {
+	@Test
+	public void testGetUserById() throws Exception {
 
-        mockMvc.perform(get("/api/users/{id}", testUserId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testUserId));
-    }
+		mockMvc.perform(get("/api/users/{id}", testUserId)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(testUserId));
+	}
 
-    @Test
-    public void testCreateUser() throws Exception {
+	@Test
+	public void testCreateUser() throws Exception {
 
-        String newUserJson = """
-        {
-          "firstName": "Jane",
-          "lastName": "Doe",
-          "email": "jane@test.com",
-          "phoneNumber": "0987654321",
-          "password": "123",
-          "role": "PROVIDER"
-        }
-        """;
+		String newUserJson = """
+				{
+				  "firstName": "Jane",
+				  "lastName": "Doe",
+				  "email": "jane@test.com",
+				  "phoneNumber": "0987654321",
+				  "password": "123",
+				  "role": "PROVIDER"
+				}
+				""";
 
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(newUserJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("jane@test.com"));
-    }
+		mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(newUserJson))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.email").value("jane@test.com"));
+	}
 
-    @Test
-    public void testGetAllUsers() throws Exception {
+	@Test
+	public void testGetAllUsers() throws Exception {
 
-        mockMvc.perform(get("/api/users"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
+		mockMvc.perform(get("/api/users")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
 
-    @Test
-    public void testUpdateUser() throws Exception {
+	@Test
+	public void testUpdateUser() throws Exception {
 
-        String updatedUserJson = """
-        {
-          "firstName": "Updated",
-          "lastName": "User",
-          "email": "jane@test.com",
-          "phoneNumber": "1112223330,
-          "role": "PROVIDER"
-        }
-        """;
+		String updatedUserJson = """
+				      {
+				        "firstName": "Updated",
+						"lastName": "User",
+						"email": "updated@test.com",
+						"password": "123",
+						"phoneNumber": "1112223333",
+						"role": "PROVIDER"
+				      }
+				      """;
 
-        mockMvc.perform(put("/api/users/{id}", testUserId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedUserJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("updated@test.com"));
-    }
+		mockMvc.perform(
+				put("/api/users/{id}", testUserId).contentType(MediaType.APPLICATION_JSON).content(updatedUserJson))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.email").value("updated@test.com"));
+	}
 
-    @Test
-    public void testDeleteUser() throws Exception {
+	@Test
+	public void testDeleteUser() throws Exception {
 
-        mockMvc.perform(delete("/api/users/{id}", testUserId))
-                .andExpect(status().isOk());
-    }
+		mockMvc.perform(delete("/api/users/{id}", testUserId)).andExpect(status().isOk());
+	}
 }
