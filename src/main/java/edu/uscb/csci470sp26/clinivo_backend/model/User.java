@@ -4,7 +4,12 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({
+    "password",
+    "phoneNumber"
+})
 @Entity
 @Table(name = "users")
 public class User {

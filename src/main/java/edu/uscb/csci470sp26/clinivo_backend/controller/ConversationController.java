@@ -7,7 +7,6 @@ import edu.uscb.csci470sp26.clinivo_backend.model.Conversation;
 import edu.uscb.csci470sp26.clinivo_backend.service.ConversationService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/conversations")
@@ -31,24 +30,15 @@ public class ConversationController {
         return new ConversationResponse(conversation.getId());
     }
 
-    // Get the single conversation for a doctor
+    // ⭐ Return FULL conversations for doctor (includes patient names)
     @GetMapping("/doctor/{doctorId}")
-    public List<ConversationResponse> getDoctorConversations(@PathVariable Long doctorId) {
-        return conversationService.getDoctorConversations(doctorId)
-                .stream()
-                .map(c -> new ConversationResponse(c.getId()))
-                .collect(Collectors.toList());
+    public List<Conversation> getDoctorConversations(@PathVariable Long doctorId) {
+        return conversationService.getDoctorConversations(doctorId);
     }
 
-
-
-
-    // Get the single conversation for a patient
+    // ⭐ Return FULL conversation for patient (includes doctor info)
     @GetMapping("/patient/{patientId}")
-    public ConversationResponse getPatientConversation(@PathVariable Long patientId) {
-
-        Conversation conversation = conversationService.getPatientConversation(patientId);
-
-        return new ConversationResponse(conversation.getId());
+    public Conversation getPatientConversation(@PathVariable Long patientId) {
+        return conversationService.getPatientConversation(patientId);
     }
 }
