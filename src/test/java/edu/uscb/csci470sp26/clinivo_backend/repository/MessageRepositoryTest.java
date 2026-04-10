@@ -49,7 +49,7 @@ public class MessageRepositoryTest {
         messageRepository.save(message);
 
         List<Message> messages =
-                messageRepository.findByConversationIdOrderByCreatedAtAsc(conversation.getId());
+                messageRepository.findByConversationOrderByCreatedAtAsc(conversation);
 
         assertEquals(1, messages.size());
         assertEquals("Hello!", messages.get(0).getContent());

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.*;
 
 import edu.uscb.csci470sp26.clinivo_backend.dto.UserRequest;
+import edu.uscb.csci470sp26.clinivo_backend.dto.LoginRequest;
 import edu.uscb.csci470sp26.clinivo_backend.dto.UserResponse;
 import edu.uscb.csci470sp26.clinivo_backend.model.User;
 import edu.uscb.csci470sp26.clinivo_backend.service.UserService;
@@ -65,6 +66,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+    
+    // LOGIN user
+    @PostMapping("/login")
+    public UserResponse loginUser(@RequestBody LoginRequest request) {
+        User user = userService.authenticateUser(request.getEmail(), request.getPassword());
+        return mapToResponse(user);
     }
 
     //  Helper mapper
