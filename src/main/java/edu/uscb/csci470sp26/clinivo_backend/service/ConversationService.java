@@ -33,7 +33,7 @@ public class ConversationService {
         User patient = userRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-        if (doctor.getRole() != User.Role.PROVIDER) {
+        if (doctor.getRole() != User.Role.DOCTOR) {
             throw new RuntimeException("doctorId does not belong to a provider");
         }
 
