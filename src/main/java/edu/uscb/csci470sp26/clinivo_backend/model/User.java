@@ -41,7 +41,7 @@ public class User {
     private LocalDateTime createdAt;
 
     public enum Role {
-        PROVIDER,
+        DOCTOR,
         PATIENT
     }
 

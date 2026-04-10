@@ -16,7 +16,7 @@ public class UserRequest {
     @NotBlank(message = "Password is required")
     private String password;
     @NotBlank(message = "Role is required")
-    private String role; // "PATIENT" or "PROVIDER"
+    private String role; // "PATIENT" or "DOCTOR"
 
     public UserRequest() {}
 
