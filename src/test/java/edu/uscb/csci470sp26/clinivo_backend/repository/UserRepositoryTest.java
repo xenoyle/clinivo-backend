@@ -51,7 +51,7 @@ public class UserRepositoryTest {
         user.setEmail("jane@test.com");
         user.setPassword("123");
         user.setPhoneNumber("0987654321");
-        user.setRole(User.Role.PROVIDER);
+        user.setRole(User.Role.DOCTOR);
 
         User savedUser = userRepository.save(user);
 
