@@ -50,6 +50,7 @@ public class UserService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
+        user.setPassword(request.getPassword());
         user.setRole(User.Role.valueOf(request.getRole()));
 
         return userRepository.save(user);
@@ -58,5 +59,17 @@ public class UserService {
     //  Delete
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+    
+    // Login
+    public User authenticateUser(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        return user;
     }
 }

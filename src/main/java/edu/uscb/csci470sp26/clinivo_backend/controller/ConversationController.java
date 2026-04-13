@@ -7,7 +7,6 @@ import edu.uscb.csci470sp26.clinivo_backend.model.Conversation;
 import edu.uscb.csci470sp26.clinivo_backend.service.ConversationService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/conversations")
@@ -15,27 +14,31 @@ public class ConversationController {
 
     private final ConversationService conversationService;
 
-    // Constructor injection
     public ConversationController(ConversationService conversationService) {
         this.conversationService = conversationService;
     }
 
-    //  Create conversation
-    @PostMapping
-    public ConversationResponse createConversation(@RequestBody List<Long> participantIds) {
+    // Create or return existing conversation between doctor and patient
+    @PostMapping("/{doctorId}/{patientId}")
+    public ConversationResponse createOrGetConversation(
+            @PathVariable Long doctorId,
+            @PathVariable Long patientId) {
 
-        Conversation conversation = conversationService.createConversation(participantIds);
+        Conversation conversation =
+                conversationService.getOrCreateConversation(doctorId, patientId);
 
         return new ConversationResponse(conversation.getId());
     }
 
-    //  Get user conversations
-    @GetMapping("/user/{userId}")
-    public List<ConversationResponse> getUserConversations(@PathVariable Long userId) {
+    // ⭐ Return FULL conversations for doctor (includes patient names)
+    @GetMapping("/doctor/{doctorId}")
+    public List<Conversation> getDoctorConversations(@PathVariable Long doctorId) {
+        return conversationService.getDoctorConversations(doctorId);
+    }
 
-        return conversationService.getUserConversations(userId)
-                .stream()
-                .map(c -> new ConversationResponse(c.getId()))
-                .collect(Collectors.toList());
+    // ⭐ Return FULL conversation for patient (includes doctor info)
+    @GetMapping("/patient/{patientId}")
+    public Conversation getPatientConversation(@PathVariable Long patientId) {
+        return conversationService.getPatientConversation(patientId);
     }
 }
