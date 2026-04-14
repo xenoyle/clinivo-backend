@@ -20,6 +20,16 @@ public class MessageRead {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	private boolean isRead;
+	
+	public boolean isRead() {
+		return isRead;
+	}
+
+	public void setRead(boolean isRead) {
+		this.isRead = isRead;
+	}
+
 	private LocalDateTime readAt = LocalDateTime.now();
 
 	public Long getId() {
