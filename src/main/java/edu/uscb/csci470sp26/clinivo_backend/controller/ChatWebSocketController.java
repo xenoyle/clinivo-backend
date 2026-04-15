@@ -30,6 +30,7 @@ public class ChatWebSocketController {
     @MessageMapping("/sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
 
+        // Save message to DB
         Message saved = messageService.sendMessage(
                 chatMessage.getConversationId(),
                 chatMessage.getSenderId(),
@@ -38,25 +39,31 @@ public class ChatWebSocketController {
 
         Conversation conv = saved.getConversation();
 
+        // Build response DTO
         MessageResponse response = new MessageResponse(
                 saved.getId(),
                 saved.getSender().getId(),
                 saved.getContent(),
                 saved.getCreatedAt(),
-                saved.getConversation().getId() // ⭐ ADD THIS
+                conv.getId()
         );
 
+        Long doctorId = conv.getDoctor().getId();
+        Long patientId = conv.getPatient().getId();
 
-        // Send to doctor
+        // Always send to doctor
         messagingTemplate.convertAndSend(
-                "/topic/messages/" + conv.getDoctor().getId(),
+                "/topic/messages/" + doctorId,
                 response
         );
 
-        // Send to patient
-        messagingTemplate.convertAndSend(
-                "/topic/messages/" + conv.getPatient().getId(),
-                response
-        );
+        // Only send to patient if they are NOT the doctor
+        // Prevents duplicate messages when sender == patient
+        if (!doctorId.equals(patientId)) {
+            messagingTemplate.convertAndSend(
+                    "/topic/messages/" + patientId,
+                    response
+            );
+        }
     }
 }
