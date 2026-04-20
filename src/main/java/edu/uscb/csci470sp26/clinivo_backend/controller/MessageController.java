@@ -54,4 +54,14 @@ public class MessageController {
                 ))
                 .collect(Collectors.toList());
     }
+    
+    @PostMapping("/read")
+    public void markAsRead(@RequestParam Long conversationId, @RequestParam Long userId) {
+		messageService.markMessagesAsRead(conversationId, userId);
+	}
+    
+    @GetMapping("/unread/{userId}")
+    public int getUnreadCount(@PathVariable Long userId) {
+        return messageService.getUnreadCount(userId);
+    }
 }
