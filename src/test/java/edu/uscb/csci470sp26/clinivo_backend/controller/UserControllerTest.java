@@ -79,7 +79,7 @@ public class UserControllerTest {
 				  "email": "jane@test.com",
 				  "phoneNumber": "0987654321",
 				  "password": "123",
-				  "role": "PROVIDER"
+				  "role": "DOCTOR"
 				}
 				""";
 
@@ -104,7 +104,7 @@ public class UserControllerTest {
 						"email": "updated@test.com",
 						"password": "123",
 						"phoneNumber": "1112223333",
-						"role": "PROVIDER"
+						"role": "DOCTOR"
 				      }
 				      """;
 
