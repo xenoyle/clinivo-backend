@@ -33,21 +33,34 @@ public class MessageControllerTest {
     @BeforeEach
     void setup() throws Exception {
 
-        String userJson = """
-        {
-          "firstName": "Test",
-          "lastName": "User",
-          "email": "test1@test.com",
-          "password": "123",
-          "phoneNumber": "1234567890",
-          "role": "PATIENT"
-        }
-        """;
+    	long timestamp = System.currentTimeMillis();
+
+    	String doctorJson = """
+    	{
+    	  "firstName": "Test",
+    	  "lastName": "User",
+    	  "email": "doctor_%d@test.com",
+    	  "password": "123",
+    	  "phoneNumber": "1234567890",
+    	  "role": "DOCTOR"
+    	}
+    	""".formatted(timestamp);
+
+    	String patientJson = """
+    	{
+    	  "firstName": "Test",
+    	  "lastName": "User",
+    	  "email": "patient_%d@test.com",
+    	  "password": "123",
+    	  "phoneNumber": "1234567890",
+    	  "role": "PATIENT"
+    	}
+    	""".formatted(timestamp);
 
         // Create user 1
         String response1 = mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson))
+                .content(doctorJson))
                 .andReturn().getResponse().getContentAsString();
 
         Integer id1 = JsonPath.read(response1, "$.id");
@@ -56,7 +69,7 @@ public class MessageControllerTest {
         // Create user 2
         String response2 = mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson.replace("test1", "test2")))
+                .content(patientJson.replace("test1", "test2")))
                 .andReturn().getResponse().getContentAsString();
 
         Integer id2 = JsonPath.read(response2, "$.id");
@@ -65,7 +78,7 @@ public class MessageControllerTest {
         // Create conversation
         String conversationJson = "[" + user1Id + "," + user2Id + "]";
 
-        String convoResponse = mockMvc.perform(post("/api/conversations")
+        String convoResponse = mockMvc.perform(post("/api/conversations/" + user1Id + "/" + user2Id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(conversationJson))
                 .andReturn().getResponse().getContentAsString();

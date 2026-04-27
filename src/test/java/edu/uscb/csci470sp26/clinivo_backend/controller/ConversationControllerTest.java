@@ -32,27 +32,40 @@ public class ConversationControllerTest {
     @BeforeEach
     void setup() throws Exception {
 
-        String userJson = """
-        {
-          "firstName": "Test",
-          "lastName": "User",
-          "email": "user1@test.com",
-          "password": "123",
-          "phoneNumber": "1234567890",
-          "role": "PATIENT"
-        }
-        """;
+    	long timestamp = System.currentTimeMillis();
+
+    	String doctorJson = """
+    	{
+    	  "firstName": "Test",
+    	  "lastName": "User",
+    	  "email": "doctor_%d@test.com",
+    	  "password": "123",
+    	  "phoneNumber": "1234567890",
+    	  "role": "DOCTOR"
+    	}
+    	""".formatted(timestamp);
+
+    	String patientJson = """
+    	{
+    	  "firstName": "Test",
+    	  "lastName": "User",
+    	  "email": "patient_%d@test.com",
+    	  "password": "123",
+    	  "phoneNumber": "1234567890",
+    	  "role": "PATIENT"
+    	}
+    	""".formatted(timestamp);
 
         String response1 = mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson))
+                .content(doctorJson))
                 .andReturn().getResponse().getContentAsString();
 
         user1Id = ((Number)JsonPath.read(response1, "$.id")).longValue();
 
         String response2 = mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson.replace("user1", "user2")))
+                .content(patientJson.replace("user1", "user2")))
                 .andReturn().getResponse().getContentAsString();
 
         user2Id = ((Number)JsonPath.read(response2, "$.id")).longValue();
@@ -63,7 +76,7 @@ public class ConversationControllerTest {
 
         String json = "[" + user1Id + "," + user2Id + "]";
 
-        mockMvc.perform(post("/api/conversations")
+        mockMvc.perform(post("/api/conversations/" + user1Id + "/" + user2Id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk())
