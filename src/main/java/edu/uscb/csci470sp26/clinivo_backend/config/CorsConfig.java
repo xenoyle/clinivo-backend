@@ -17,7 +17,7 @@ public class CorsConfig {
             
                         .allowedOrigins(
                             "http://localhost:5173", 
-                            "https://clinivo-frontend.netlify.app" // Ensure no trailing slash
+                            "https://clinivo-frontend.netlify.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
