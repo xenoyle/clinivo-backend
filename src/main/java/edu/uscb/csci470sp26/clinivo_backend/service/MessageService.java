@@ -24,15 +24,17 @@ public class MessageService {
 	private final UserRepository userRepository;
 	private final ConversationParticipantRepository participantRepository;
 	private final MessageReadRepository messageReadRepository;
+	private final EncryptionService encryptionService;
 
 	public MessageService(MessageRepository messageRepository, ConversationRepository conversationRepository,
 			UserRepository userRepository, ConversationParticipantRepository participantRepository,
-			MessageReadRepository messageReadRepository) {
+			MessageReadRepository messageReadRepository, EncryptionService encryptionService) {
 		this.messageRepository = messageRepository;
 		this.conversationRepository = conversationRepository;
 		this.userRepository = userRepository;
 		this.participantRepository = participantRepository;
 		this.messageReadRepository = messageReadRepository;
+		this.encryptionService = encryptionService;
 	}
 
 	public Message sendMessage(Long conversationId, Long senderId, String content) {
@@ -51,7 +53,8 @@ public class MessageService {
 		Message message = new Message();
 		message.setConversation(conversation);
 		message.setSender(sender);
-		message.setContent(content);
+		// Encrypt the content before storing
+		message.setContent(encryptionService.encrypt(content));
 
 		message = messageRepository.save(message);
 
@@ -77,7 +80,14 @@ public class MessageService {
 		Conversation conversation = conversationRepository.findById(conversationId)
 				.orElseThrow(() -> new RuntimeException("Conversation not found"));
 
-		return messageRepository.findByConversationOrderByCreatedAtAsc(conversation);
+		List<Message> messages = messageRepository.findByConversationOrderByCreatedAtAsc(conversation);
+		
+		// Decrypt all messages before returning
+		for (Message message : messages) {
+			message.setContent(encryptionService.decrypt(message.getContent()));
+		}
+		
+		return messages;
 	}
 
 	public void markMessagesAsRead(Long conversationId, Long userId) {

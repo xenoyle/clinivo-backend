@@ -10,6 +10,7 @@ import edu.uscb.csci470sp26.clinivo_backend.dto.MessageResponse;
 import edu.uscb.csci470sp26.clinivo_backend.model.Conversation;
 import edu.uscb.csci470sp26.clinivo_backend.model.Message;
 import edu.uscb.csci470sp26.clinivo_backend.service.ConversationService;
+import edu.uscb.csci470sp26.clinivo_backend.service.EncryptionService;
 import edu.uscb.csci470sp26.clinivo_backend.service.MessageService;
 
 @Controller
@@ -18,19 +19,22 @@ public class ChatWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final ConversationService conversationService;
+    private final EncryptionService encryptionService;
 
     public ChatWebSocketController(SimpMessagingTemplate messagingTemplate,
                                    MessageService messageService,
-                                   ConversationService conversationService) {
+                                   ConversationService conversationService,
+                                   EncryptionService encryptionService) {
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
         this.conversationService = conversationService;
+        this.encryptionService = encryptionService;
     }
 
     @MessageMapping("/sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
 
-        // Save message to DB
+        // Save message to DB (encrypted)
         Message saved = messageService.sendMessage(
                 chatMessage.getConversationId(),
                 chatMessage.getSenderId(),
@@ -39,11 +43,14 @@ public class ChatWebSocketController {
 
         Conversation conv = saved.getConversation();
 
-        // Build response DTO
+        // Decrypt the content for WebSocket transmission to clients
+        String decryptedContent = encryptionService.decrypt(saved.getContent());
+
+        // Build response DTO with decrypted content
         MessageResponse response = new MessageResponse(
                 saved.getId(),
                 saved.getSender().getId(),
-                saved.getContent(),
+                decryptedContent,
                 saved.getCreatedAt(),
                 conv.getId()
         );

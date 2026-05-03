@@ -6,6 +6,7 @@ import edu.uscb.csci470sp26.clinivo_backend.model.Conversation;
 import edu.uscb.csci470sp26.clinivo_backend.model.Message;
 import edu.uscb.csci470sp26.clinivo_backend.model.User;
 import edu.uscb.csci470sp26.clinivo_backend.service.ConversationService;
+import edu.uscb.csci470sp26.clinivo_backend.service.EncryptionService;
 import edu.uscb.csci470sp26.clinivo_backend.service.MessageService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ class ChatWebSocketControllerTest {
     private SimpMessagingTemplate messagingTemplate;
     private MessageService messageService;
     private ConversationService conversationService;
+    private EncryptionService encryptionService;
     private ChatWebSocketController controller;
 
     @BeforeEach
@@ -28,11 +30,13 @@ class ChatWebSocketControllerTest {
         messagingTemplate = mock(SimpMessagingTemplate.class);
         messageService = mock(MessageService.class);
         conversationService = mock(ConversationService.class);
+        encryptionService = mock(EncryptionService.class);
 
         controller = new ChatWebSocketController(
                 messagingTemplate,
                 messageService,
-                conversationService
+                conversationService,
+                encryptionService
         );
     }
 
@@ -55,28 +59,38 @@ class ChatWebSocketControllerTest {
         conv.setDoctor(doctor);
         conv.setPatient(patient);
 
-        // Mock saved message
+        // Mock saved message with encrypted content
+        String encryptedContent = "EncryptedHello123";
         Message saved = new Message();
         saved.setId(100L);
         saved.setSender(doctor);
-        saved.setContent("Hello");
+        saved.setContent(encryptedContent);
         saved.setConversation(conv);
 
         when(messageService.sendMessage(10L, 1L, "Hello"))
                 .thenReturn(saved);
+        
+        // Mock decryption
+        when(encryptionService.decrypt(encryptedContent))
+                .thenReturn("Hello");
 
         controller.sendMessage(incoming);
 
-        // Verify broadcast to doctor
-        verify(messagingTemplate).convertAndSend(
+        // Verify broadcast to doctor with decrypted content
+        ArgumentCaptor<MessageResponse> doctorCaptor = ArgumentCaptor.forClass(MessageResponse.class);
+        verify(messagingTemplate, times(1)).convertAndSend(
                 eq("/topic/messages/1"),
-                any(MessageResponse.class)
+                doctorCaptor.capture()
         );
+        assertEquals("Hello", doctorCaptor.getValue().getContent());
 
-        // Verify broadcast to patient
-        verify(messagingTemplate).convertAndSend(
+        // Verify broadcast to patient with decrypted content
+        ArgumentCaptor<MessageResponse> patientCaptor = ArgumentCaptor.forClass(MessageResponse.class);
+        verify(messagingTemplate, times(1)).convertAndSend(
                 eq("/topic/messages/2"),
-                any(MessageResponse.class)
+                patientCaptor.capture()
         );
+        assertEquals("Hello", patientCaptor.getValue().getContent());
     }
 }
+
