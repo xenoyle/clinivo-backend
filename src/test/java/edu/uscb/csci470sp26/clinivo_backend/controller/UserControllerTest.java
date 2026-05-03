@@ -118,4 +118,31 @@ public class UserControllerTest {
 
 		mockMvc.perform(delete("/api/users/{id}", testUserId)).andExpect(status().isOk());
 	}
+
+	@Test
+	public void testLoginUser() throws Exception {
+		String loginJson = """
+				{
+				  "email": "john@test.com",
+				  "password": "123"
+				}
+				""";
+
+		mockMvc.perform(post("/api/users/login").contentType(MediaType.APPLICATION_JSON).content(loginJson))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.email").value("john@test.com"));
+	}
+
+	@Test
+	public void testLoginUserInvalidPassword() throws Exception {
+		String loginJson = """
+				{
+				  "email": "john@test.com",
+				  "password": "wrongpassword"
+				}
+				""";
+
+		mockMvc.perform(post("/api/users/login").contentType(MediaType.APPLICATION_JSON).content(loginJson))
+				.andExpect(status().isInternalServerError());
+	}
 }

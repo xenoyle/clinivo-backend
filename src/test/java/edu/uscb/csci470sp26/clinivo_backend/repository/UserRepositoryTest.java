@@ -33,7 +33,7 @@ public class UserRepositoryTest {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setEmail("john@test.com");
-        user.setPassword("123");
+        user.setPassword("hashedpassword123");
         user.setPhoneNumber("1234567890");
         user.setRole(User.Role.PATIENT);
 
@@ -52,7 +52,7 @@ public class UserRepositoryTest {
         user.setFirstName("Jane");
         user.setLastName("Doe");
         user.setEmail("jane@test.com");
-        user.setPassword("123");
+        user.setPassword("hashedpassword456");
         user.setPhoneNumber("0987654321");
         user.setRole(User.Role.DOCTOR);
 
@@ -69,7 +69,7 @@ public class UserRepositoryTest {
         user.setFirstName("Delete");
         user.setLastName("Me");
         user.setEmail("delete@test.com");
-        user.setPassword("123");
+        user.setPassword("hashedpassword789");
         user.setPhoneNumber("1112223333");
         user.setRole(User.Role.PATIENT);
 
