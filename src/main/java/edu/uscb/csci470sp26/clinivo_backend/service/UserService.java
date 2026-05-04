@@ -59,6 +59,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // Return only patients
+    public List<User> getPatients() {
+        return userRepository.findByRole(User.Role.PATIENT);
+    }
+
     //  Delete
     public void deleteUser(Long id) {
         userRepository.deleteById(id);

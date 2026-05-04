@@ -43,6 +43,15 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
+    //  GET only patients (for doctors to list and start conversations)
+    @GetMapping("/patients")
+    public List<UserResponse> getPatients() {
+        return userService.getPatients()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     //  GET user by ID
     @GetMapping("/{id}")
     public UserResponse getUserById(@PathVariable Long id) {
