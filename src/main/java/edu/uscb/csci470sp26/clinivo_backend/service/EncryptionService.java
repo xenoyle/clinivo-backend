@@ -28,7 +28,9 @@ public class EncryptionService {
         try {
             if (encryptionKey != null && !encryptionKey.isEmpty()) {
                 // Decode the key from Base64 string (from application.properties)
-                byte[] decodedKey = Base64.getDecoder().decode(encryptionKey);
+                // Some configuration sources may insert whitespace or line breaks; remove them first.
+                String sanitizedKey = encryptionKey.replaceAll("\\s+", "");
+                byte[] decodedKey = Base64.getDecoder().decode(sanitizedKey);
                 return new SecretKeySpec(decodedKey, 0, decodedKey.length, ALGORITHM);
             } else {
                 // Generate a new key if not provided
@@ -71,10 +73,16 @@ public class EncryptionService {
             
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            
-            byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
+
+            // Remove any whitespace (spaces, newlines, tabs) that may have been introduced
+            String sanitized = encryptedText.replaceAll("\\s+", "");
+
+            byte[] decodedBytes = Base64.getDecoder().decode(sanitized);
             byte[] decryptedBytes = cipher.doFinal(decodedBytes);
             return new String(decryptedBytes);
+        } catch (IllegalArgumentException iae) {
+            // More specific messaging for Base64 decoding problems
+            throw new RuntimeException("Decryption failed: invalid Base64 input", iae);
         } catch (Exception e) {
             throw new RuntimeException("Decryption failed", e);
         }
