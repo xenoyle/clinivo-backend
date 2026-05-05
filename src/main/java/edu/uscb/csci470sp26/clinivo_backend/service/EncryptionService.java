@@ -19,6 +19,7 @@ public class EncryptionService {
 
     public EncryptionService(@Value("${encryption.key:}") String encryptionKey) {
         this.secretKey = getOrGenerateKey(encryptionKey);
+        System.out.println("MY STATIC KEY: " + getEncodedKey());
     }
 
     /**
@@ -94,4 +95,6 @@ public class EncryptionService {
     public String getEncodedKey() {
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
+    
+    
 }
