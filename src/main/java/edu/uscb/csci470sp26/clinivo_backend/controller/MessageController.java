@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import edu.uscb.csci470sp26.clinivo_backend.dto.MessageRequest;
 import edu.uscb.csci470sp26.clinivo_backend.dto.MessageResponse;
 import edu.uscb.csci470sp26.clinivo_backend.model.Message;
+import edu.uscb.csci470sp26.clinivo_backend.service.EncryptionService;
 import edu.uscb.csci470sp26.clinivo_backend.service.MessageService;
 
 import java.util.List;
@@ -15,9 +16,11 @@ import java.util.stream.Collectors;
 public class MessageController {
 
     private final MessageService messageService;
+    private final EncryptionService encryptionService;
 
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, EncryptionService encryptionService) {
         this.messageService = messageService;
+        this.encryptionService = encryptionService;
     }
 
     // Send a message
@@ -30,12 +33,15 @@ public class MessageController {
                 request.getContent()
         );
 
+        // Decrypt the content for the response
+        String decryptedContent = encryptionService.decrypt(message.getContent());
+
         return new MessageResponse(
                 message.getId(),
                 message.getSender().getId(),
-                message.getContent(),
+                decryptedContent,
                 message.getCreatedAt(),
-                message.getConversation().getId()   // ⭐ ADDED
+                message.getConversation().getId()
         );
     }
 
@@ -48,9 +54,9 @@ public class MessageController {
                 .map(m -> new MessageResponse(
                         m.getId(),
                         m.getSender().getId(),
-                        m.getContent(),
+                        m.getContent(),  // Already decrypted by MessageService
                         m.getCreatedAt(),
-                        m.getConversation().getId()   // ⭐ ADDED
+                        m.getConversation().getId()
                 ))
                 .collect(Collectors.toList());
     }
@@ -65,3 +71,4 @@ public class MessageController {
         return messageService.getUnreadCount(userId);
     }
 }
+

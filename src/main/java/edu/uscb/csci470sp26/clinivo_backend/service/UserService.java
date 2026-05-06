@@ -1,5 +1,6 @@
 package edu.uscb.csci470sp26.clinivo_backend.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import edu.uscb.csci470sp26.clinivo_backend.dto.UserRequest;
@@ -12,9 +13,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //  Create
@@ -25,7 +28,7 @@ public class UserService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setPassword(request.getPassword()); // ⚠️ hash later
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(User.Role.valueOf(request.getRole()));
 
         return userRepository.save(user);
@@ -50,10 +53,15 @@ public class UserService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(User.Role.valueOf(request.getRole()));
 
         return userRepository.save(user);
+    }
+
+    // Return only patients
+    public List<User> getPatients() {
+        return userRepository.findByRole(User.Role.PATIENT);
     }
 
     //  Delete
@@ -66,7 +74,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 

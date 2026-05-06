@@ -66,7 +66,6 @@ public class ConversationService {
         return conversationRepository.findByDoctor(doctor);
     }
 
-    //Automatically create a conversation for a patient if missing
     public Conversation getPatientConversation(Long patientId) {
 
         User patient = userRepository.findById(patientId)
@@ -76,26 +75,29 @@ public class ConversationService {
             throw new RuntimeException("patientId does not belong to a patient");
         }
 
-        //Hardcoded doctor for now (can be dynamic later)
-        Long doctorId = 2L;
+        // 1. Check if a conversation ALREADY exists for this patient
+        java.util.Optional<Conversation> existingConv = conversationRepository.findByPatient(patient);
+        if (existingConv.isPresent()) {
+            return existingConv.get();
+        }
 
-        User doctor = userRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        // 2. If no conversation exists, find the first available doctor dynamically
+        User doctor = userRepository.findByRole(User.Role.DOCTOR).stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("No doctors found in the system"));
 
-        return conversationRepository.findByDoctorAndPatient(doctor, patient)
-                .orElseGet(() -> {
-                    Conversation newConv = new Conversation();
-                    newConv.setDoctor(doctor);
-                    newConv.setPatient(patient);
-                    Conversation saved = conversationRepository.save(newConv);
+        // 3. Create and save the new conversation
+        Conversation newConv = new Conversation();
+        newConv.setDoctor(doctor);
+        newConv.setPatient(patient);
+        Conversation saved = conversationRepository.save(newConv);
 
-                    //Notify doctor in real time
-                    messagingTemplate.convertAndSend(
-                        "/topic/conversations/" + doctorId,
-                        saved
-                    );
+        // Notify doctor in real time
+        messagingTemplate.convertAndSend(
+            "/topic/conversations/" + doctor.getId(),
+            saved
+        );
 
-                    return saved;
-                });
+        return saved;
     }
+    
 }

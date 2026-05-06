@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import edu.uscb.csci470sp26.clinivo_backend.model.User;
@@ -22,6 +26,14 @@ import jakarta.transaction.Transactional;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
+	
+	 @TestConfiguration
+	    static class TestConfig {
+	        @Bean
+	        public PasswordEncoder passwordEncoder() {
+	            return new BCryptPasswordEncoder();
+	        }
+	    }
 
     @Autowired
     private UserRepository userRepository;
@@ -33,7 +45,7 @@ public class UserRepositoryTest {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setEmail("john@test.com");
-        user.setPassword("123");
+        user.setPassword("hashedpassword123");
         user.setPhoneNumber("1234567890");
         user.setRole(User.Role.PATIENT);
 
@@ -52,7 +64,7 @@ public class UserRepositoryTest {
         user.setFirstName("Jane");
         user.setLastName("Doe");
         user.setEmail("jane@test.com");
-        user.setPassword("123");
+        user.setPassword("hashedpassword456");
         user.setPhoneNumber("0987654321");
         user.setRole(User.Role.DOCTOR);
 
@@ -69,7 +81,7 @@ public class UserRepositoryTest {
         user.setFirstName("Delete");
         user.setLastName("Me");
         user.setEmail("delete@test.com");
-        user.setPassword("123");
+        user.setPassword("hashedpassword789");
         user.setPhoneNumber("1112223333");
         user.setRole(User.Role.PATIENT);
 
