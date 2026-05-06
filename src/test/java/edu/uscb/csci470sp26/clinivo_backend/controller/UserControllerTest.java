@@ -143,6 +143,6 @@ public class UserControllerTest {
 				""";
 
 		mockMvc.perform(post("/api/users/login").contentType(MediaType.APPLICATION_JSON).content(loginJson))
-				.andExpect(status().isInternalServerError());
+				.andExpect(status().isUnauthorized());
 	}
 }
