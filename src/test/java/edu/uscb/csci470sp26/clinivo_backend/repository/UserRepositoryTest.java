@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import edu.uscb.csci470sp26.clinivo_backend.model.User;
@@ -22,6 +26,14 @@ import jakarta.transaction.Transactional;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
+	
+	 @TestConfiguration
+	    static class TestConfig {
+	        @Bean
+	        public PasswordEncoder passwordEncoder() {
+	            return new BCryptPasswordEncoder();
+	        }
+	    }
 
     @Autowired
     private UserRepository userRepository;
