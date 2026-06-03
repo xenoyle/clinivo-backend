@@ -30,7 +30,7 @@ Clinivo's backend serves as the core data and communication layer for the Cliniv
 | Framework | Spring Boot 3 |
 | Language | Java 17 |
 | ORM | Spring Data JPA / Hibernate |
-| Database | MySQL (configurable) |
+| Database | PostgreSQL (configurable) |
 | Real-time | STOMP over WebSocket (SockJS) |
 | Security | Spring Security + BCrypt |
 | Encryption | AES-256 |
@@ -89,7 +89,7 @@ clinivo-backend/src/main/java/.../clinivo_backend/
 
 - Java 17+
 - Maven 3.8+
-- A running MySQL instance
+- A running PostgreSQL instance
 
 ### Installation
 
